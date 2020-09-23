@@ -26,7 +26,10 @@ const postCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndDelete(req.params.cardId)
+  Card.findByIdAndDelete(
+    req.user._id,
+    req.params.cardId,
+  )
     .orFail(new Error("NotValidCardId"))
     .then((card) => {
       res.status(200).send({ data: card });
