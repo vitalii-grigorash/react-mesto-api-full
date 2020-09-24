@@ -6,6 +6,7 @@ const usersRouter = require("./routes/users");
 const cardsRouter = require("./routes/cards");
 const { login, createUser } = require("./controllers/users");
 const { userValidation, loginValidation } = require("./middlewares/joiValidation");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 const auth = require("./middlewares/auth");
 
 const { PORT = 3000 } = process.env;
@@ -21,11 +22,15 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
   useFindAndModify: false,
 });
 
+app.use(requestLogger);
+
 app.post("/signin", loginValidation, login);
 app.post("/signup", userValidation, createUser);
 
 app.use("/", auth, usersRouter);
 app.use("/", auth, cardsRouter);
+
+app.use(errorLogger);
 
 app.use((req, res) => {
   res.status(400).send({ message: "Запрашиваемый ресурс не найден" });
