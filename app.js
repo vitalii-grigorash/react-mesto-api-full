@@ -24,9 +24,9 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
 
 app.use(requestLogger);
 
-app.get('/crash-test', () => {
+app.get("/crash-test", () => {
   setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
+    throw new Error("Сервер сейчас упадёт");
   }, 0);
 });
 
