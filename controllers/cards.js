@@ -15,18 +15,15 @@ const postCard = (req, res, next) => {
   const ownerId = req.user._id;
 
   Card.create({ name, link, owner: ownerId })
-    .then((card) => res.send({ data: card }))
     .catch(() => {
       throw new BadRequestError({ message: "Переданы некорректные данные" });
     })
+    .then((card) => res.send({ data: card }))
     .catch(next);
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndDelete(
-    req.user._id,
-    req.params.cardId,
-  )
+  Card.findByIdAndDelete(req.params._id)
     .orFail(new Error("NotValidCardId"))
     .then((card) => {
       res.status(200).send({ data: card });
@@ -43,7 +40,7 @@ const deleteCard = (req, res, next) => {
 
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params._id,
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
@@ -63,13 +60,13 @@ const likeCard = (req, res, next) => {
 
 const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params._id,
     { $pull: { likes: req.user._id } },
     { new: true },
   )
     .orFail(new Error("NotValidCardId"))
-    .then((card) => {
-      res.status(200).send({ data: card });
+    .then((likes) => {
+      res.status(200).send({ data: likes });
     })
     .catch((err) => {
       if (err.message === "NotValidCardId") {
