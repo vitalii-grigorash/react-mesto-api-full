@@ -51,6 +51,10 @@ app.use(errorLogger);
 
 app.use(errors());
 
+app.use((req, res) => {
+  res.status(400).send({ message: "Запрашиваемый ресурс не найден" });
+});
+
 app.use((err, req, res, next) => {
   if (err.statusCode) {
     res.status(err.statusCode).send(err.message);
@@ -58,10 +62,6 @@ app.use((err, req, res, next) => {
   }
   res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
   next();
-});
-
-app.use((req, res) => {
-  res.status(400).send({ message: "Запрашиваемый ресурс не найден" });
 });
 
 app.listen(PORT);

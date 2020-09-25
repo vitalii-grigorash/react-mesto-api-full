@@ -9,15 +9,15 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 const getUser = (req, res, next) => {
   User.findById(req.params.id)
     .orFail(new Error("NotValidUserId"))
-    .then((user) => {
-      res.status(200).send(user);
-    })
     .catch((err) => {
       if (err.message === "NotValidUserId") {
         throw new NotFoundError({ message: "Нет пользователя с таким id" });
       } else {
         throw new BadRequestError({ message: "Переданы некорректные данные" });
       }
+    })
+    .then((user) => {
+      res.status(200).send(user);
     })
     .catch(next);
 };
@@ -78,15 +78,15 @@ const updateUser = (req, res, next) => {
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(new Error("NotValidUserId"))
-    .then((user) => {
-      res.status(200).send({ data: user });
-    })
     .catch((err) => {
       if (err.message === "NotValidUserId") {
         throw new NotFoundError({ message: "Нет пользователя с таким id" });
       } else {
         throw new BadRequestError({ message: "Переданы некорректные данные" });
       }
+    })
+    .then((user) => {
+      res.status(200).send({ data: user });
     })
     .catch(next);
 };
@@ -96,15 +96,15 @@ const updateAvatar = (req, res, next) => {
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(new Error("NotValidUserId"))
-    .then((user) => {
-      res.status(200).send({ data: user });
-    })
     .catch((err) => {
       if (err.message === "NotValidUserId") {
         throw new NotFoundError({ message: "Нет пользователя с таким id" });
       } else {
         throw new BadRequestError({ message: "Переданы некорректные данные" });
       }
+    })
+    .then((user) => {
+      res.status(200).send({ data: user });
     })
     .catch(next);
 };

@@ -25,15 +25,15 @@ const postCard = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   Card.findByIdAndDelete(req.params._id)
     .orFail(new Error("NotValidCardId"))
-    .then((card) => {
-      res.status(200).send({ data: card });
-    })
     .catch((err) => {
       if (err.message === "NotValidCardId") {
         throw new NotFoundError({ message: "Карточка не найдена" });
       } else {
         throw new BadRequestError({ message: "Переданы некорректные данные" });
       }
+    })
+    .then((card) => {
+      res.status(200).send({ data: card });
     })
     .catch(next);
 };
@@ -45,15 +45,15 @@ const likeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(new Error("NotValidCardId"))
-    .then((card) => {
-      res.status(200).send({ data: card });
-    })
     .catch((err) => {
       if (err.message === "NotValidCardId") {
         throw new NotFoundError({ message: "Карточка не найдена" });
       } else {
         throw new BadRequestError({ message: "Переданы некорректные данные" });
       }
+    })
+    .then((card) => {
+      res.status(200).send({ data: card });
     })
     .catch(next);
 };
@@ -65,15 +65,15 @@ const dislikeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(new Error("NotValidCardId"))
-    .then((likes) => {
-      res.status(200).send({ data: likes });
-    })
     .catch((err) => {
       if (err.message === "NotValidCardId") {
         throw new NotFoundError({ message: "Карточка не найдена" });
       } else {
         throw new BadRequestError({ message: "Переданы некорректные данные" });
       }
+    })
+    .then((likes) => {
+      res.status(200).send({ data: likes });
     })
     .catch(next);
 };
