@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const isEmail = require("validator/lib/isEmail");
+const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const AuthError = require("../errors/AuthError");
 
@@ -20,10 +20,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator(value) {
-        return /https?:\/\/[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&//=]*)?/.test(value);
+      validator(link) {
+        return validator.isURL(link);
       },
-      message: "Invalid URL.",
+      message: "Некорректный URL",
     },
   },
   email: {
@@ -31,8 +31,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     validate: {
-      validator: (email) => isEmail(email),
-      message: "Неправильный формат почты",
+      validator(email) {
+        return validator.isEmail(email);
+      },
+      message: "Некорректный формат почты",
     },
   },
   password: {

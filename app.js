@@ -11,6 +11,7 @@ const { login, createUser } = require("./controllers/users");
 const { userValidation, loginValidation } = require("./middlewares/joiValidation");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 const auth = require("./middlewares/auth");
+const NotFoundError = require("./errors/NotFoundError");
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -47,13 +48,13 @@ app.post("/signup", userValidation, createUser);
 app.use("/", auth, usersRouter);
 app.use("/", auth, cardsRouter);
 
+app.use(() => {
+  throw new NotFoundError({ message: "Запрашиваемый ресурс не найден" });
+});
+
 app.use(errorLogger);
 
 app.use(errors());
-
-app.use((req, res) => {
-  res.status(400).send({ message: "Запрашиваемый ресурс не найден" });
-});
 
 app.use((err, req, res, next) => {
   if (err.statusCode) {

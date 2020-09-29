@@ -1,6 +1,7 @@
 const Card = require("../models/card");
 const NotFoundError = require("../errors/NotFoundError");
 const BadRequestError = require("../errors/BadRequestError");
+const ForbiddenError = require("../errors/ForbiddenError");
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -23,7 +24,7 @@ const postCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndDelete(req.params._id)
+  Card.findById(req.params._id)
     .orFail(new Error("NotValidCardId"))
     .catch((err) => {
       if (err.message === "NotValidCardId") {
@@ -33,7 +34,14 @@ const deleteCard = (req, res, next) => {
       }
     })
     .then((card) => {
-      res.status(200).send({ data: card });
+      if (card.owner.toString() !== req.user._id) {
+        throw new ForbiddenError({ message: "Недостаточно прав для удаления карточки" });
+      }
+      Card.findByIdAndDelete(req.params._id)
+        .then((cardData) => {
+          res.send({ data: cardData });
+        })
+        .catch(next);
     })
     .catch(next);
 };
